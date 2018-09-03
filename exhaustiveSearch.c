@@ -18,7 +18,7 @@ void mem_init(int odim, int idim; bool mem[odim][idim], int odim, int idim){
 	}
 }
 
-void giveup_test(int odim, int idim){
+void giveup_test(int odim, int idim, int n_fault){//TODO Multiple faults
 	int r=(RAND_MAX+1U)%(odim*idim);
 	if(random()<r)
 		printf("%d ", 1);//giveup
