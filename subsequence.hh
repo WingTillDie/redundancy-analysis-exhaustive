@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
@@ -14,10 +15,15 @@ struct array{
 	~array(){
 		delete a;
 	}
+	void operator=(array& arr){//Will be auto created?
+		n=arr.n;
+		a=new int[n];
+		memcpy(a, arr.a, n*sizeof(int));
+	}
 	void print(){
 		for(int i=0; i<n; i++)
 			cout << a[i] << ' ';
-		cout << '\n';
+		//cout << '\n';
 	}
 	void set(int x, int v){//index, value
 		a[x]=v;

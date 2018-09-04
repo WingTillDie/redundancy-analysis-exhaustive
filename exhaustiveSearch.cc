@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include "subsequence.hh"
-#define debug
+//#define debug
 
 /*
 void mem_print(int rdim, int cdim; bool mem[rdim][cdim], int rdim, int cdim){
@@ -47,6 +47,9 @@ struct Point{
 	}
 	int operator>(Point p){//Just sort by r
 		return r>p.r;
+	}
+	int operator<(Point p){//Just sort by r
+		return r<p.r;
 	}
 };
 
@@ -376,6 +379,7 @@ struct Tree{
                 return s.size;
 	}
 	int C(int n){//C r get n in combinatorics
+		if(n==0) return 0;
 		int r=size;
 		array a(n);
 		int index=n-1;
@@ -386,7 +390,7 @@ struct Tree{
 #ifdef debug
 					cout << '\n';
 #endif
-					return ret;//TODO Temp
+					return ret;
 				}
 				a.align(index);
 			}
@@ -394,6 +398,36 @@ struct Tree{
 			int tmp=sol(a);
 			if(tmp<ret||ret==-1)
 				ret=tmp;
+#ifdef debug
+			a.print();
+			cout << ':' << sol(a) << '\n';//Just for debugging
+#endif
+			a[index]++;
+		}
+	}
+	array* C_Which(int n){//Get exactly which combination for debugging
+		if(n==0) return NULL;
+		int r=size;
+		array a(n);
+		int index=n-1;
+		int ret=-1;
+		array *arr_r=new array(n);//Lack destructor
+		while(true){
+			while(a[index]>r-n+index){
+				if(--index<0){
+#ifdef debug
+					cout << '\n';
+#endif
+					return arr_r;//TODO problem
+				}
+				a.align(index);
+			}
+			index=n-1;
+			int tmp=sol(a);
+			if(tmp<ret||ret==-1){
+				ret=tmp;
+				*arr_r=a;
+			}
 #ifdef debug
 			a.print();
 			cout << ':' << sol(a) << '\n';//Just for debugging
@@ -576,7 +610,7 @@ Tree points_gen(int n, int rdim, int cdim){//n: faults //Retry if repeat//TODO M
 
 
 
-//TODO A function that return solution list(multiple (nRow, nCol))
+//TODO A function that return solution list(multiple (nRow, nCol))//Not finished
 Point* solution_list(Tree& t){//Don't insert if used is larger than previous record//Need tree?
 	//int i=1;//TODO change to for loop
 	//sub(i, t.size);
@@ -585,6 +619,112 @@ Point* solution_list(Tree& t){//Don't insert if used is larger than previous rec
 	//Try select 2 index and solve//Get all children of index and put it into stack to remove duplicate
 	
 	return sol;//Change to tree?
+}
+
+void print_sol(int n, int rdim, int cdim){//n: faults
+	Stack<Point>* sol=new Stack<Point>;
+	Tree a=points_gen(n, rdim, cdim);
+	cout << "Tree:\n";
+	a.print();
+	cout << "Sol:\n";
+	cStack s;
+	for(int i=0; i<=a.size; i++){
+		sol->insert({a.size-i, a.C(i)});
+		cout << a.size-i << ' ' << a.C(i) << ": ";
+		array *arr=a.C_Which(i);
+		if(arr!=NULL){
+			arr->print();
+			for(int i=0; i<arr->n; i++)
+				s.insert(a[(*arr)[i]]);
+			cout << ": ";
+			s.print();
+		}
+		cout << '\n';
+	}
+	sol->print();
+	delete sol;
+}
+
+Stack<Point>& return_sol(int n, int rdim, int cdim){//n: faults
+	Stack<Point>* sol=new Stack<Point>;
+	Tree a=points_gen(n, rdim, cdim);
+	cout << "Tree:\n";
+	a.print();
+	cout << "Sol:\n";
+	cStack s;
+	for(int i=0; i<=a.size; i++){
+		sol->insert({a.size-i, a.C(i)});
+		cout << a.size-i << ' ' << a.C(i) << ": ";
+		array *arr=a.C_Which(i);
+		if(arr!=NULL){
+			arr->print();
+			for(int i=0; i<arr->n; i++)
+				s.insert(a[(*arr)[i]]);
+			cout << ": ";
+			s.print();
+		}
+		cout << '\n';
+	}
+	sol->print();
+	return *sol;
+}
+
+int print_repairable(int sr, int sc, int n, int rdim, int cdim){//1 is reparable, 0 is not reparable//n:faults sr:spare row sc:spare column	
+	int ret=0;
+	Tree a=points_gen(n, rdim, cdim);
+	cout << "Tree:\n";
+	a.print();
+	cout << "Sol:\n";
+	cStack s;
+	for(int i=0; i<=a.size; i++){//Can check lesser?
+		int row=a.size-i;
+		int col=a.C(i);
+		//sol->insert({row, col});
+		cout << row << ' ' << col;
+		if(row<=sr && col<=sc)
+			cout << "Repairable\n";
+		/*
+		array *arr=a.C_Which(i);
+		if(arr!=NULL){
+			arr->print();
+			for(int i=0; i<arr->n; i++)
+				s.insert(a[(*arr)[i]]);
+			cout << ": ";
+			s.print();
+		}
+		*/
+		cout << '\n';
+	}
+}
+
+int repairable_brief(int sr, int sc, int n, int rdim, int cdim){//1 is reparable, 0 is not reparable//n:faults sr:spare row sc:spare column//Brieft output
+	int ret=0;
+	Tree a=points_gen(n, rdim, cdim);
+	//cout << "Tree:\n";
+	a.print();
+	//cout << "Sol:\n";
+	//cStack s;
+	for(int i=0; i<=a.size; i++){//Can check lesser?
+		int row=a.size-i;
+		int col=a.C(i);
+		//sol->insert({row, col});
+		if(row<=sr && col<=sc){
+			cout << "Repairable\n";
+			return ret;
+		}
+		/*
+		array *arr=a.C_Which(i);
+		if(arr!=NULL){
+			arr->print();
+			for(int i=0; i<arr->n; i++)
+				s.insert(a[(*arr)[i]]);
+			cout << ": ";
+			s.print();
+		}
+		*/
+	}
+	cout << "NOT repairable\n";
+	return ret;
 }
 
 namespace test{
@@ -657,7 +797,8 @@ namespace test{
 		//mem_init(mem, rdim, cdim);
 		//mem_print(mem, rdim, cdim);
 	}
-	void smallTree(){
+	void smallTree(){//Correctly solved the tree
+		Stack<Point> sol;
 		Tree a;
 		a.insert({3,7});
 		a.insert({3,5});
@@ -665,19 +806,36 @@ namespace test{
 		a.insert({1,7});
 		a.insert({1,8});
 		a.print();
-		//solution_list(a);
 		cStack s;
-		s.insert(a[0]);
-		s.insert(a[2]);
-		//cout << s.size;
-		s.insert(a[1]);
-		cout << a.C(3);
-		//cout << a[1, 0];
+		for(int i=0; i<=a.size; i++){
+			sol.insert({a.size-i, a.C(i)});
+			cout << a.size-i << ' ' << a.C(i) << ": ";
+			array *arr=a.C_Which(i);
+			if(arr!=NULL){
+				arr->print();
+				for(int i=0; i<arr->n; i++)
+					s.insert(a[(*arr)[i]]);
+				cout << ": ";
+				s.print();
+			}
+			cout << '\n';
+		}
 	}
 	void stackPoint(){
 		Stack<Point> a; a.print_List();
 		a.insert(Point(3,4)); a.print_List();
 		a.insert(Point(4,4)); a.print_List();
+	}
+	void arr(){
+		int i=3;
+		array a(i);
+		a.print();
+		array *arr_r=new array(i);
+		a.print();
+		*arr_r=a;
+		a[0]=99;
+		arr_r->print();
+		a.print();
 	}
 }
 int main(){
@@ -687,5 +845,8 @@ int main(){
 	srandom(time(NULL));
 	//test::gen_nPoints(5);
 	//test::insert2cStack();
-	test::smallTree();
+	//test::smallTree();
+	//test::arr();
+	for(int i=0; i<20; i++)
+		repairable_brief(2, 1, 4, 10, 10);
 }
