@@ -235,6 +235,7 @@ struct Stack{
 		}
 		printf("\n");
 	}
+	void print(){print_List();}
 };
 
 struct cStack{
@@ -245,8 +246,29 @@ struct cStack{
 	cStack(int c){
 		insert(c);
 	}
+	cStack(cStack &s){//How to const cStack
+		/*
+		for(int i=0; i<s.size; i++)
+			this->insert(s[i]); //Can be faster by manipulating cList
+		*/
+		insert(s);//Small problem not copy but is insert actually
+	}
 	~cStack(){//TODO implement free c
 		clear();
+	}
+	void insert(cStack &s){
+		for(int i=0; i<s.size; i++)
+			insert(s[i]); //Can be faster by manipulating cList
+	}
+	operator()(cStack &s){
+		clear();
+		insert(s);
+	}
+	int& operator[](int n){
+		cList *current=head;
+		for(int i=0; i<n; i++)
+			current=current->next;
+		return current->c;
 	}
 	void clear(){//TODO implement free c
 		cList *current=head;
@@ -318,6 +340,7 @@ struct cStack{
 		}
 		printf("\n");
 	}
+	void print(){print_cList();}
 };
 
 
@@ -339,6 +362,44 @@ struct Tree{
 		}
 		head=NULL;
 		size=0;
+	}
+	cStack& operator[](int n){
+		rList *current=head;
+		for(int i=0; i<n; i++)
+			current=current->next;
+		return *current->child;
+	}
+	int sol(array& arr){
+		cStack s;
+		for(int i=0; i<arr.n; i++)
+			s.insert((*this)[arr[i]]);
+                return s.size;
+	}
+	int C(int n){//C r get n in combinatorics
+		int r=size;
+		array a(n);
+		int index=n-1;
+		int ret=-1;
+		while(true){
+			while(a[index]>r-n+index){
+				if(--index<0){
+#ifdef debug
+					cout << '\n';
+#endif
+					return ret;//TODO Temp
+				}
+				a.align(index);
+			}
+			index=n-1;
+			int tmp=sol(a);
+			if(tmp<ret||ret==-1)
+				ret=tmp;
+#ifdef debug
+			a.print();
+			cout << ':' << sol(a) << '\n';//Just for debugging
+#endif
+			a[index]++;
+		}
 	}
 	virtual int insert(Point p){//Return if there's duplication then higher function call again
 		int r=p.r;
@@ -424,9 +485,10 @@ struct Tree{
 		}
 		cout << '\n'; 
 	}
+	void print(){print_tree();}
 };
 
-struct STree : Tree{//Solution list//Don't insert if larger
+struct STree : Tree{//Solution list//TODO Don't insert if larger
 	int insert(Point p) override{//Return if there's duplication then higher function call again
 		int r=p.r;
 		int c=p.c;//Related features not implemented
@@ -513,73 +575,117 @@ Tree points_gen(int n, int rdim, int cdim){//n: faults //Retry if repeat//TODO M
 }
 
 
-//TODO A function that return solution list(multiple (nRow, nCol))
-/*
-solution_list(){//Don't insert if used is larger than previous record//Need tree?
 
+//TODO A function that return solution list(multiple (nRow, nCol))
+Point* solution_list(Tree& t){//Don't insert if used is larger than previous record//Need tree?
+	//int i=1;//TODO change to for loop
+	//sub(i, t.size);
+	Point *sol=new Point[t.size];//TODO: Need destructor
+	sol[0]={t.size, 0};
+	//Try select 2 index and solve//Get all children of index and put it into stack to remove duplicate
+	
+	return sol;//Change to tree?
 }
-*/
+
+namespace test{
+	void insert2cStack(){
+		cStack s;
+		s.insert(1);
+		s.insert(2);
+		s.insert(3);
+		cStack s2;
+		s2.insert(2);
+		s2.insert(3);
+		s2.insert(4);
+		s2.insert(5);
+		cStack s3;
+		s3.insert(s);
+		s3.insert(s2);
+		s.print();
+		s2.print();
+		s3.print();
+	}
+	void gen_nPoints(int n){
+		for(int i=0; i<n; i++)
+			points_gen(4, 10, 10).print_tree();
+	}
+	void tree(){
+		Tree a;
+		a.print_tree();
+		a.insert({3,7}); a.print_tree();
+		a.insert({3,7}); a.print_tree();
+		a.insert({3,8}); a.print_tree();
+		a.insert({2,4}); a.print_tree();
+		a.insert({0,4}); a.print_tree();
+		a.insert({0,9}); a.print_tree();
+		a.insert({26,-3}); a.print_tree();
+	}
+	void tree_new(){
+		Tree a;
+		a.print_rList();
+		a.insert({3,7}); a.print_rList();
+		a.insert({3,7}); a.print_rList();
+		a.insert({5,7}); a.print_rList();
+		a.insert({4,7}); a.print_rList();
+		a.insert({4,7}); a.print_rList();
+		a.insert({4,8}); a.print_rList();
+		a.print_tree();
+		a.~Tree(); a.print_rList();
+		a.insert({4,7}); a.print_rList();
+	}
+	void cstack(){
+		cStack b;
+		b.print_cList();
+		b.insert(3); b.print_cList();
+		b.insert(3); b.print_cList();
+		b.insert(5); b.print_cList();
+		b.insert(4); b.print_cList();
+		b.insert(4); b.print_cList();
+		b.insert(1); b.print_cList();
+		b.~cStack(); b.print_cList();
+		b.insert(4); b.print_cList();
+	}
+	void PointDirectInint(){
+		List<Point> a={.data={3,7}};
+		cout << a.data;
+	}
+	void giveUpTest(){//2**30
+		for(int i=0; i<1000; i++)
+			point_gen(812825, 1321);//812825 and 1321
+	}
+	void oldTest(){
+		//mem_init(mem, rdim, cdim);
+		//mem_print(mem, rdim, cdim);
+	}
+	void smallTree(){
+		Tree a;
+		a.insert({3,7});
+		a.insert({3,5});
+		a.insert({2,1});
+		a.insert({1,7});
+		a.insert({1,8});
+		a.print();
+		//solution_list(a);
+		cStack s;
+		s.insert(a[0]);
+		s.insert(a[2]);
+		//cout << s.size;
+		s.insert(a[1]);
+		cout << a.C(3);
+		//cout << a[1, 0];
+	}
+	void stackPoint(){
+		Stack<Point> a; a.print_List();
+		a.insert(Point(3,4)); a.print_List();
+		a.insert(Point(4,4)); a.print_List();
+	}
+}
 int main(){
 	int common_dim=10;//Change to 1024
 	int rdim=common_dim, cdim=common_dim;
 	//bool mem[rdim][cdim];
 	srandom(time(NULL));
-	/*
-	for(int i=0; i<50; i++)
-		points_gen(4, 20, 20).print_tree();
-	*/
-	///*
-	Stack<Point> a; a.print_List();
-	a.insert(Point(3,4)); a.print_List();
-	a.insert(Point(4,4)); a.print_List();
-	//*/
-	/*
-	List<Point> a;
-	a.data={3,7};
-	cout << a.data;
-	*/
-	//mem_init(mem, rdim, cdim);
-	//mem_print(mem, rdim, cdim);
-	//printf("%u", RAND_MAX+1U);
-	//2**30
-	/*
-	for(int i=0; i<1000; i++)
-		point_gen(812825, 1321);//812825 and 1321
-	*/
-	/*
-	Tree_new a;
-	a.print_rList();
-	a.insert({3,7}); a.print_rList();
-	a.insert({3,7}); a.print_rList();
-	a.insert({5,7}); a.print_rList();
-	a.insert({4,7}); a.print_rList();
-	a.insert({4,7}); a.print_rList();
-	a.insert({4,8}); a.print_rList();
-	a.print_tree();
-	a.~Tree_new(); a.print_rList();
-	a.insert({4,7}); a.print_rList();
-	*/
-	/*
-	Tree a;
-	a.print_tree();
-	a.insert({3,7}); a.print_tree();
-	a.insert({3,7}); a.print_tree();
-	a.insert({3,8}); a.print_tree();
-	a.insert({2,4}); a.print_tree();
-	a.insert({0,4}); a.print_tree();
-	a.insert({0,9}); a.print_tree();
-	a.insert({26,-3}); a.print_tree();
-	*/
-	/*
-	cStack b;
-	b.print_cList();
-	b.insert(3); b.print_cList();
-	b.insert(3); b.print_cList();
-	b.insert(5); b.print_cList();
-	b.insert(4); b.print_cList();
-	b.insert(4); b.print_cList();
-	b.insert(1); b.print_cList();
-	b.~cStack(); b.print_cList();
-	b.insert(4); b.print_cList();
-	*/
+	//test::gen_nPoints(5);
+	//test::insert2cStack();
+	test::smallTree();
 }

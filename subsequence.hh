@@ -37,7 +37,7 @@ struct array{
 };
 
 
-void sub(int n, int r){//Get num, range//Finished
+void sub(int r, int n){//Range, get num AKA: C r get n(combinatorics)
 	array a(n);
 	int index=n-1;
 	while(true){
