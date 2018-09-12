@@ -597,7 +597,7 @@ Point point_gen(int rdim, int cdim){
 	return p;
 }
 
-Tree points_gen(int n, int rdim, int cdim){//n: faults //Retry if repeat//TODO Multiple faults
+Tree points_gen(int n, int rdim, int cdim){//n: faults
 	Tree a;
 	for(int i=0; i<n; i++){
 		int r;
@@ -697,6 +697,7 @@ int print_repairable(int sr, int sc, int n, int rdim, int cdim){//1 is reparable
 	}
 }
 
+//Remove solutions in solution list that are bad than other solution? But it will be slower than direct comparison?
 int repairable_brief(int sr, int sc, int n, int rdim, int cdim){//1 is reparable, 0 is not reparable//n:faults sr:spare row sc:spare column//Brieft output
 	int ret=0;
 	Tree a=points_gen(n, rdim, cdim);
@@ -838,6 +839,7 @@ namespace test{
 		a.print();
 	}
 }
+
 int main(){
 	int common_dim=10;//Change to 1024
 	int rdim=common_dim, cdim=common_dim;
@@ -847,6 +849,9 @@ int main(){
 	//test::insert2cStack();
 	//test::smallTree();
 	//test::arr();
-	for(int i=0; i<20; i++)
-		repairable_brief(2, 1, 4, 10, 10);
+	for(int i=0; i<20; i++){
+		print_sol(4, 10, 10);
+		//print_repairable(2, 1, 4, 10, 10);
+		//repairable_brief(2, 1, 4, 10, 10);
+	}
 }
