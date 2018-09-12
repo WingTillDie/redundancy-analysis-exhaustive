@@ -1,4 +1,4 @@
 # redundancy-analysis-exhaustive
 Redundancy analysis using exhaustive search
-# Usage
+## Usage
 Compile and run exhaustiveSearch.cc to get results
