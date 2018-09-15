@@ -4,6 +4,8 @@
 #include <ctime>
 #include <cmath>
 #include <cstdint>
+#include <sstream>
+#include <fstream>
 #include "subsequence.hh"
 //#define debug
 
@@ -50,6 +52,11 @@ struct Point{
 	}
 	int operator<(Point p){//Just sort by r
 		return r<p.r;
+	}
+	string repr_compact(){//TODO not finished
+		ostringstream buffer;
+		buffer << r << ',' << c;
+		return buffer.str();
 	}
 };
 
@@ -609,6 +616,33 @@ Tree points_gen(int n, int rdim, int cdim){//n: faults
 }
 
 
+Tree points_gen_print(int n, int rdim, int cdim){//n: faults
+	Tree a;
+	for(int i=0; i<n; i++){
+		int r;
+		Point p;
+		do {
+			p=point_gen(rdim, cdim);
+			r=a.insert(p);
+		} while (r);
+		cout << p.repr_compact() << ',';
+	}
+	return a;
+}
+
+Tree points_gen_fprint(ofstream& fout, int n, int rdim, int cdim){//n: faults
+	Tree a;
+	for(int i=0; i<n; i++){
+		int r;
+		Point p;
+		do {
+			p=point_gen(rdim, cdim);
+			r=a.insert(p);
+		} while (r);
+		fout << p.repr_compact() << ',';
+	}
+	return a;
+}
 
 //TODO A function that return solution list(multiple (nRow, nCol))//Not finished
 Point* solution_list(Tree& t){//Don't insert if used is larger than previous record//Need tree?
@@ -711,6 +745,7 @@ int repairable_brief(int sr, int sc, int n, int rdim, int cdim){//1 is reparable
 		//sol->insert({row, col});
 		if(row<=sr && col<=sc){
 			cout << "Repairable\n";
+			ret=1;
 			return ret;
 		}
 		/*
@@ -725,6 +760,37 @@ int repairable_brief(int sr, int sc, int n, int rdim, int cdim){//1 is reparable
 		*/
 	}
 	cout << "NOT repairable\n";
+	return ret;
+}
+
+int  repairable_brief_fprint(ofstream& points, ofstream& label, int sr, int sc, int n, int rdim, int cdim){//1 is reparable, 0 is not reparable//n:faults sr:spare row sc:spare column//Brieft output
+	int ret=0;
+	Tree a=points_gen_fprint(points, n, rdim, cdim);
+	//cout << "Tree:\n";
+	//a.print();
+	//cout << "Sol:\n";
+	//cStack s;
+	for(int i=0; i<=a.size; i++){//Can check lesser?
+		int row=a.size-i;
+		int col=a.C(i);
+		//sol->insert({row, col});
+		if(row<=sr && col<=sc){
+			ret=1;
+			label << ret << ',';
+			return ret;
+		}
+		/*
+		array *arr=a.C_Which(i);
+		if(arr!=NULL){
+			arr->print();
+			for(int i=0; i<arr->n; i++)
+				s.insert(a[(*arr)[i]]);
+			cout << ": ";
+			s.print();
+		}
+		*/
+	}
+	label << ret << ',';
 	return ret;
 }
 
@@ -849,9 +915,17 @@ int main(){
 	//test::insert2cStack();
 	//test::smallTree();
 	//test::arr();
-	for(int i=0; i<20; i++){
-		print_sol(4, 10, 10);
-		//print_repairable(2, 1, 4, 10, 10);
-		//repairable_brief(2, 1, 4, 10, 10);
+	ofstream points;
+	points.open("points");
+	ofstream label;
+	label.open("label");
+	for(int i=0; i<3; i++){//5, 5, 17, 1024, 1024
+		//print_sol(5, 10, 10);
+		//points_gen_fprint(points, 5, 10, 10);
+		//print_repairable(5, 5, 17, 1024, 1024);
+		//repairable_brief(1, 2, 5, 10, 10);
+		repairable_brief_fprint(points, label, 1, 2, 5, 10, 10);
 	}
+	points.close();
+	label.close();
 }
