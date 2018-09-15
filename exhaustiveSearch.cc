@@ -906,25 +906,36 @@ namespace test{
 	}
 }
 
+void fprint_property(ofstream& points, ofstream& label, int sr, int sc, int n, int rdim, int cdim){
+	points << n << ',';
+	points << rdim << ',';
+	points << cdim << ',';
+
+	label << sr << ',';
+	label << sc << ',';
+	label << n << ',';
+	label << rdim << ',';
+	label << cdim << ',';
+}
+
 int main(){
 	int common_dim=10;//Change to 1024
 	int rdim=common_dim, cdim=common_dim;
+	int sr=1, sc=2, n_faults=5;
 	//bool mem[rdim][cdim];
 	srandom(time(NULL));
 	//test::gen_nPoints(5);
 	//test::insert2cStack();
 	//test::smallTree();
 	//test::arr();
-	ofstream points;
-	points.open("points");
-	ofstream label;
-	label.open("label");
+	ofstream points("points"), label("label");
+	fprint_property(points, label, sr, sc, n_faults, rdim, cdim);
 	for(int i=0; i<3; i++){//5, 5, 17, 1024, 1024
-		//print_sol(5, 10, 10);
-		//points_gen_fprint(points, 5, 10, 10);
-		//print_repairable(5, 5, 17, 1024, 1024);
-		//repairable_brief(1, 2, 5, 10, 10);
-		repairable_brief_fprint(points, label, 1, 2, 5, 10, 10);
+		//print_sol(n_faults, rdim, cdim);
+		//points_gen_fprint(points, n_faults, rdim, cdim);
+		//print_repairable(sr, sc, n_faults, rdim, cdim);
+		//repairable_brief(sr, sc, n_faults, rdim, cdim);
+		repairable_brief_fprint(points, label, sr, sc, n_faults, rdim, cdim);
 	}
 	points.close();
 	label.close();
