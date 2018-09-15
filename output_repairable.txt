@@ -1,0 +1,17 @@
+by print_repairable()
+
+Tree:
+4: 6
+6: 1
+7: 5
+8: 5
+
+Sol:
+4 0
+3 1Repairable
+
+2 1Repairable
+
+1 2Repairable
+
+0 3Repairable
