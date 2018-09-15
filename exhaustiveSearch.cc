@@ -53,7 +53,7 @@ struct Point{
 	int operator<(Point p){//Just sort by r
 		return r<p.r;
 	}
-	string repr_compact(){//TODO not finished
+	string repr_compact(){
 		ostringstream buffer;
 		buffer << r << ',' << c;
 		return buffer.str();
