@@ -918,6 +918,24 @@ void fprint_property(ofstream& points, ofstream& label, int sr, int sc, int n, i
 	label << cdim << ',';
 }
 
+void fsolve_create(int n, string filename_points, string filename_label, int sr, int sc, int n_faults, int rdim, int cdim){
+	ofstream points(filename_points), label(filename_label);
+	fprint_property(points, label, sr, sc, n_faults, rdim, cdim);
+	for(int i=0; i<n; i++){
+		repairable_brief_fprint(points, label, sr, sc, n_faults, rdim, cdim);
+	}
+	points.close();
+	label.close();
+}
+void fsolve_append(int n, string filename_points, string filename_label, int sr, int sc, int n_faults, int rdim, int cdim){//TODO change mode to append
+	ofstream points(filename_points, ios_base::app), label(filename_label, ios_base::app);
+	for(int i=0; i<n; i++){
+		repairable_brief_fprint(points, label, sr, sc, n_faults, rdim, cdim);
+	}
+	points.close();
+	label.close();
+}
+
 int main(){
 	int common_dim=10;//Change to 1024
 	int rdim=common_dim, cdim=common_dim;
@@ -928,6 +946,7 @@ int main(){
 	//test::insert2cStack();
 	//test::smallTree();
 	//test::arr();
+	/*
 	ofstream points("points"), label("label");
 	fprint_property(points, label, sr, sc, n_faults, rdim, cdim);
 	for(int i=0; i<3; i++){//5, 5, 17, 1024, 1024
@@ -939,4 +958,6 @@ int main(){
 	}
 	points.close();
 	label.close();
+	*/
+	fsolve_append(3, "points", "label", sr, sc, n_faults, rdim, cdim);
 }
