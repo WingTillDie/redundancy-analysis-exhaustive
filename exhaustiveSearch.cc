@@ -923,6 +923,7 @@ void fsolve_create(int n, string filename_points, string filename_label, int sr,
 	fprint_property(points, label, sr, sc, n_faults, rdim, cdim);
 	for(int i=0; i<n; i++){
 		repairable_brief_fprint(points, label, sr, sc, n_faults, rdim, cdim);
+		cout << '\r' << i << flush;
 	}
 	points.close();
 	label.close();
@@ -931,6 +932,7 @@ void fsolve_append(int n, string filename_points, string filename_label, int sr,
 	ofstream points(filename_points, ios_base::app), label(filename_label, ios_base::app);
 	for(int i=0; i<n; i++){
 		repairable_brief_fprint(points, label, sr, sc, n_faults, rdim, cdim);
+		cout << '\r' << i << flush;
 	}
 	points.close();
 	label.close();
@@ -959,5 +961,5 @@ int main(){
 	points.close();
 	label.close();
 	*/
-	fsolve_append(3, "points", "label", sr, sc, n_faults, rdim, cdim);
+	fsolve_append(70000, "points", "label", sr, sc, n_faults, rdim, cdim);
 }
