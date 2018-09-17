@@ -1,5 +1,6 @@
 # redundancy-analysis-exhaustive
-Redundancy analysis using exhaustive search
+Redundancy analysis using exhaustive search: exhaustiveSearch.cc  
+Memory repair early abort using tensorflow: eeProjectOutput.ipynb
 ## Description
 This repo solve memory redundancy analysis using exhaustive search  
 Try to repair using only spare rows first, then try to remove some spare row and find how much spare columns needed to repair the memory. This repo use combinatorics to try every combination of remove rows to find best solutions, called solution list.  
