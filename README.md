@@ -1,6 +1,6 @@
 # redundancy-analysis-exhaustive
-Redundancy analysis using exhaustive search: exhaustiveSearch.cc  
-Memory repair early abort using tensorflow: eeProjectOutput.ipynb  
+Redundancy analysis using exhaustive search: [exhaustiveSearch.cc](exhaustiveSearch.cc)  
+Memory repair early abort using tensorflow: [eeProjectOutput.ipynb](eeProjectOutput.ipynb)  
 Try it on mybinder [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/WingTillDie/redundancy-analysis-exhaustive/master?filepath=eeProjectOutput.ipynb)
 ## Description
 This repo solve memory redundancy analysis using exhaustive search  
