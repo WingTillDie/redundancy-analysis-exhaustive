@@ -1,6 +1,7 @@
 # redundancy-analysis-exhaustive
 Redundancy analysis using exhaustive search: exhaustiveSearch.cc  
-Memory repair early abort using tensorflow: eeProjectOutput.ipynb
+Memory repair early abort using tensorflow: eeProjectOutput.ipynb  
+[Try it](https://mybinder.org/v2/gh/WingTillDie/redundancy-analysis-exhaustive/master?filepath=eeProjectOutput.ipynb) on mybinder
 ## Description
 This repo solve memory redundancy analysis using exhaustive search  
 Try to repair using only spare rows first, then try to remove some spare row and find how much spare columns needed to repair the memory. This repo use combinatorics to try every combination of remove rows to find best solutions, called solution list.  
