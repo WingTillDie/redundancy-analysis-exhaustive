@@ -1018,6 +1018,16 @@ void fsolve_append(int n, string filename_points, string filename_label, int sr,
 	label.close();
 }
 
+void fsolve_append_bin(int n, string filename_points, string filename_label, int sr, int sc, int n_faults, int rdim, int cdim){//TODO change mode to append
+	ofstream points(filename_points, ios_base::app|ios::binary), label(filename_label, ios_base::app|ios::binary);
+	for(int i=0; i<n; i++){
+		repairable_brief_fprint_bin(points, label, sr, sc, n_faults, rdim, cdim);
+		cout << '\r' << i << flush;
+	}
+	points.close();
+	label.close();
+}
+
 int main(){
 	int common_dim=10;//Change to 1024
 	int rdim=common_dim, cdim=common_dim;
@@ -1041,5 +1051,5 @@ int main(){
 	points.close();
 	label.close();
 	*/
-	fsolve_create_bin(5, "pointsBin", "labelBin", sr, sc, n_faults, rdim, cdim);
+	fsolve_append_bin(5, "pointsBin", "labelBin", sr, sc, n_faults, rdim, cdim);
 }
