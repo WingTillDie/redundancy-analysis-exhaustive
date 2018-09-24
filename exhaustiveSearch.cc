@@ -999,7 +999,7 @@ void fsolve_create(int n, string filename_points, string filename_label, int sr,
 	label.close();
 }
 void fsolve_create_bin(int n, string filename_points, string filename_label, int sr, int sc, int n_faults, int rdim, int cdim){
-	ofstream points(filename_points), label(filename_label);
+	ofstream points(filename_points, ios::out|ios::binary), label(filename_label, ios::out|ios::binary);
 	fprint_property_bin(points, label, sr, sc, n_faults, rdim, cdim);
 	for(int i=0; i<n; i++){
 		repairable_brief_fprint_bin(points, label, sr, sc, n_faults, rdim, cdim);
