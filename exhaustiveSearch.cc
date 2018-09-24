@@ -79,6 +79,9 @@ struct Point{
 		buffer << r << ',' << c;
 		return buffer.str();
 	}
+	void fprint_bin(std::ofstream& fout){
+		fout << reinterpret_cast<uint16_t*>(&r) << reinterpret_cast<uint16_t*>(&c);
+	}
 };
 
 ostream& operator<<(ostream& os, Point p){
@@ -674,7 +677,8 @@ Tree points_gen_fprint_bin(ofstream& fout, int n, int rdim, int cdim){//n: fault
 			p=point_gen(rdim, cdim);
 			r=a.insert(p);
 		} while (r);
-		fout << p.repr_compact() << ',';
+		p.fprint_bin(fout);
+		//fout << p.repr_compact() << ',';
 	}
 	return a;
 }
@@ -974,9 +978,9 @@ void fprint_property(ofstream& points, ofstream& label, int sr, int sc, int n, i
 }
 
 void fprint_property_bin(ofstream& points, ofstream& label, int sr, int sc, int n, int rdim, int cdim){
-	points << n << ',';
-	points << rdim << ',';
-	points << cdim << ',';
+	points << reinterpret_cast<uint16_t*>(&n);
+	points << reinterpret_cast<uint16_t*>(&rdim);
+	points << reinterpret_cast<uint16_t*>(&cdim);
 
 	label << reinterpret_cast<uint16_t*>(&sr);
 	label << reinterpret_cast<uint16_t*>(&sc);
