@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <sstream>
 #include <fstream>
+#include <cstdint>
 #include "subsequence.hh"
 //#define debug
 
@@ -34,6 +35,26 @@ void giveup_test(int rdim, int cdim){//Give up lowest numbers but harder to crea
 		printf("%d ", 0);
 }
 */
+
+
+ofstream& operator<<(ofstream& fs, uint16_t* a){
+	        fs.write(reinterpret_cast<char*>(a), sizeof(typeof(*a)));
+		        return fs;
+}
+
+ofstream& operator<<(ofstream& fs, uint16_t& a){
+	        fs.write(reinterpret_cast<char*>(&a), sizeof(typeof(a)));
+		        return fs;
+}
+
+ofstream& operator<<(ofstream& fs, uint8_t* a){
+	        fs.write(reinterpret_cast<char*>(a), sizeof(typeof(*a)));
+		        return fs;
+}
+ofstream& operator<<(ofstream& fs, uint8_t& a){//For bool label
+	        fs.write(reinterpret_cast<char*>(&a), sizeof(typeof(a)));
+		        return fs;
+}
 
 struct Point{
 	int r;
@@ -644,6 +665,19 @@ Tree points_gen_fprint(ofstream& fout, int n, int rdim, int cdim){//n: faults
 	return a;
 }
 
+Tree points_gen_fprint_bin(ofstream& fout, int n, int rdim, int cdim){//n: faults
+	Tree a;
+	for(int i=0; i<n; i++){
+		int r;
+		Point p;
+		do {
+			p=point_gen(rdim, cdim);
+			r=a.insert(p);
+		} while (r);
+		fout << p.repr_compact() << ',';
+	}
+	return a;
+}
 //TODO A function that return solution list(multiple (nRow, nCol))//Not finished
 Point* solution_list(Tree& t){//Don't insert if used is larger than previous record//Need tree?
 	//int i=1;//TODO change to for loop
@@ -794,6 +828,27 @@ int  repairable_brief_fprint(ofstream& points, ofstream& label, int sr, int sc, 
 	return ret;
 }
 
+int  repairable_brief_fprint_bin(ofstream& points, ofstream& label, int sr, int sc, int n, int rdim, int cdim){//1 is reparable, 0 is not reparable//n:faults sr:spare row sc:spare column//Brieft output
+	int ret=0;
+	Tree a=points_gen_fprint_bin(points, n, rdim, cdim);
+	//cout << "Tree:\n";
+	//a.print();
+	//cout << "Sol:\n";
+	//cStack s;
+	for(int i=0; i<=a.size; i++){//Can check lesser?
+		int row=a.size-i;
+		int col=a.C(i);
+		//sol->insert({row, col});
+		if(row<=sr && col<=sc){
+			ret=1;
+			label << reinterpret_cast<uint8_t*>(&ret);
+			return ret;
+		}
+	}
+	label << reinterpret_cast<uint8_t*>(&ret);
+	return ret;
+}
+
 namespace test{
 	void insert2cStack(){
 		cStack s;
@@ -918,11 +973,32 @@ void fprint_property(ofstream& points, ofstream& label, int sr, int sc, int n, i
 	label << cdim << ',';
 }
 
+void fprint_property_bin(ofstream& points, ofstream& label, int sr, int sc, int n, int rdim, int cdim){
+	points << n << ',';
+	points << rdim << ',';
+	points << cdim << ',';
+
+	label << reinterpret_cast<uint16_t*>(&sr);
+	label << reinterpret_cast<uint16_t*>(&sc);
+	label << reinterpret_cast<uint16_t*>(&n);
+	label << reinterpret_cast<uint16_t*>(&rdim);
+	label << reinterpret_cast<uint16_t*>(&cdim);
+}
 void fsolve_create(int n, string filename_points, string filename_label, int sr, int sc, int n_faults, int rdim, int cdim){
 	ofstream points(filename_points), label(filename_label);
 	fprint_property(points, label, sr, sc, n_faults, rdim, cdim);
 	for(int i=0; i<n; i++){
 		repairable_brief_fprint(points, label, sr, sc, n_faults, rdim, cdim);
+		cout << '\r' << i << flush;
+	}
+	points.close();
+	label.close();
+}
+void fsolve_create_bin(int n, string filename_points, string filename_label, int sr, int sc, int n_faults, int rdim, int cdim){
+	ofstream points(filename_points), label(filename_label);
+	fprint_property_bin(points, label, sr, sc, n_faults, rdim, cdim);
+	for(int i=0; i<n; i++){
+		repairable_brief_fprint_bin(points, label, sr, sc, n_faults, rdim, cdim);
 		cout << '\r' << i << flush;
 	}
 	points.close();
@@ -961,5 +1037,5 @@ int main(){
 	points.close();
 	label.close();
 	*/
-	fsolve_append(70000, "points", "label", sr, sc, n_faults, rdim, cdim);
+	fsolve_create_bin(5, "pointsBin", "labelBin", sr, sc, n_faults, rdim, cdim);
 }
