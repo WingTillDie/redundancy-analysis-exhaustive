@@ -1,2 +1,2 @@
-model_checkpoint_path: "findOptimal"
-all_model_checkpoint_paths: "findOptimal"
+model_checkpoint_path: "findOptimalBin"
+all_model_checkpoint_paths: "findOptimalBin"

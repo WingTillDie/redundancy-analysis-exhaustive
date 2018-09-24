@@ -1051,5 +1051,6 @@ int main(){
 	points.close();
 	label.close();
 	*/
-	fsolve_append_bin(5, "pointsBin", "labelBin", sr, sc, n_faults, rdim, cdim);
+	//fsolve_append_bin(80000, "pointsBin", "labelBin", sr, sc, n_faults, rdim, cdim);
+	fsolve_create_bin(80000, "pointsBinExhaustive", "labelExhaustive", sr, sc, n_faults, rdim, cdim);
 }
