@@ -377,7 +377,6 @@ struct cStack{
 	void print(){print_cList();}
 };
 
-
 struct Tree{
 	//TODO Should be child rather than new cStk
 	rList *head=NULL;
@@ -551,6 +550,11 @@ struct Tree{
 		cout << '\n'; 
 	}
 	void print(){print_tree();}
+};
+
+struct TreeRowCol{
+	Tree rF;//Row first
+	Tree cF;//Col first
 };
 
 struct STree : Tree{//Solution list//TODO Don't insert if larger
@@ -1051,6 +1055,6 @@ int main(){
 	points.close();
 	label.close();
 	*/
-	//fsolve_append_bin(80000, "pointsBin", "labelBin", sr, sc, n_faults, rdim, cdim);
-	fsolve_create_bin(80000, "pointsBinExhaustive", "labelExhaustive", sr, sc, n_faults, rdim, cdim);
+	//fsolve_append_bin(80000, "points", "label", sr, sc, n_faults, rdim, cdim);
+	fsolve_create_bin(80000, "pointsTest", "labelTest", sr, sc, n_faults, rdim, cdim);
 }
