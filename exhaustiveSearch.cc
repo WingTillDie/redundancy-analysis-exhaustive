@@ -605,7 +605,8 @@ struct Tree{//Aka. rStack
 struct TreesRowCol{
 	Tree rF;//Row first
 	Tree cF;//Col first
-	TreesRowCol(Tree rf, Tree cF): rF(rF), cF(cF){}
+	int r_must=0, c_must=0;//Must repairs
+	TreesRowCol(Tree const& rF, Tree const& cF): rF(rF), cF(cF){}
 };
 
 struct STree : Tree{//Solution list//TODO Don't insert if larger
@@ -698,14 +699,14 @@ TreesRowCol points_gen_trees(int n, int rdim, int cdim){//n: faults//Defect inje
 	Tree rF, cF;
 	for(int i=0; i<n; i++){
 		int r;
-		/*
 		do {
 			Point p = point_gen(rdim, cdim);
 			rF.insert(p);
+			//r=cF.insert({p.c, p.r});
 			r=cF.insert({p.c, p.r});
 		} while (r);
-		*/
 	}
+	//Above is defect injection
 	return TreesRowCol(rF, cF);
 }
 
@@ -1140,15 +1141,20 @@ int main(){
 	//points_gen_trees(n_faults, rdim, cdim).rF.print();
 	//TreesRowCol t(points_gen(n_faults, rdim, cdim), points_gen(n_faults, rdim, cdim));
 	//Tree t1=points_gen(n_faults, rdim, cdim);
-	///*
-	//Currently working Try copy constructor of Tree
+	/*
+	//Demonstrate copy constructor of Tree
 	Tree t1=points_gen(50, rdim, cdim);
 	t1.print();
 	Tree t2=t1;
 	t2[1][1]=99;
 	t2.print();
 	t1.print();
-	//*/
+	TreesRowCol(t1, t2);
+	*/
+	
+	TreesRowCol a=points_gen_trees(7 , rdim, cdim);
+	a.rF.print();
+	a.cF.print();
 
 	//t1.head->child->print();
 	/*
