@@ -37,6 +37,10 @@ void giveup_test(int rdim, int cdim){//Give up lowest numbers but harder to crea
 */
 
 
+bool p(double a){//Probability
+        return random()/static_cast<double>(RAND_MAX+1U)<a;
+}
+
 ofstream& operator<<(ofstream& fs, uint16_t* a){
 	        fs.write(reinterpret_cast<char*>(a), sizeof(typeof(*a)));
 		        return fs;
@@ -105,6 +109,15 @@ struct rList{//Row list///TODO Need c size?
 	int r=-1;
 	struct rList *next=NULL;
 	cStack *child=NULL;
+	/*
+	rList& operator=(const rList& other){
+		if(this != &other){
+			r=other.r;
+			for(int i=0; i<other.r; i++)
+		}
+		return *this;
+	}
+	*/
 };
 
 //Templatelize? data as struct? Only insertion is somewaht different?
@@ -290,6 +303,11 @@ struct cStack{
 	~cStack(){//TODO implement free c
 		clear();
 	}
+	/*//Not used
+	void operator=(cStack &s){
+		return insert(s);
+	}
+	*/
 	void insert(cStack &s){
 		for(int i=0; i<s.size; i++)
 			insert(s[i]); //Can be faster by manipulating cList
@@ -377,7 +395,7 @@ struct cStack{
 	void print(){print_cList();}
 };
 
-struct Tree{
+struct Tree{//Aka. rStack
 	//TODO Should be child rather than new cStk
 	rList *head=NULL;
 	int size=0;
@@ -395,6 +413,38 @@ struct Tree{
 		}
 		head=NULL;
 		size=0;
+	}
+	Tree(){}
+	Tree(const Tree& other){
+		operator=(other);
+	}
+	Tree& operator=(const Tree& other){
+		if(this != &other){
+			clear();
+			size=other.size;
+			//if size>0
+			if(other.size>0){
+				head=new rList;
+				head->child=new cStack(*other.head->child);
+				head->r=other.head->r;
+				if(other.size>1){
+					rList* prev=head, *other_current=other.head, *newNode;
+					for(int i=1; i<other.size; i++){
+						newNode=new rList;
+						prev->next=newNode;
+						other_current=other_current->next;
+						cStack* c=new cStack(*other_current->child);
+						newNode->child=c;
+						newNode->r=other_current->r;
+						prev=prev->next;
+					}
+					newNode->next=NULL;
+				}else{
+					head->next=NULL;
+				}
+			}
+		}
+		return *this;
 	}
 	cStack& operator[](int n){
 		rList *current=head;
@@ -552,9 +602,10 @@ struct Tree{
 	void print(){print_tree();}
 };
 
-struct TreeRowCol{
+struct TreesRowCol{
 	Tree rF;//Row first
 	Tree cF;//Col first
+	TreesRowCol(Tree rf, Tree cF): rF(rF), cF(cF){}
 };
 
 struct STree : Tree{//Solution list//TODO Don't insert if larger
@@ -643,6 +694,21 @@ Tree points_gen(int n, int rdim, int cdim){//n: faults
 	return a;
 }
 
+TreesRowCol points_gen_trees(int n, int rdim, int cdim){//n: faults//Defect injection
+	Tree rF, cF;
+	for(int i=0; i<n; i++){
+		int r;
+		/*
+		do {
+			Point p = point_gen(rdim, cdim);
+			rF.insert(p);
+			r=cF.insert({p.c, p.r});
+		} while (r);
+		*/
+	}
+	return TreesRowCol(rF, cF);
+}
+
 
 Tree points_gen_print(int n, int rdim, int cdim){//n: faults
 	Tree a;
@@ -686,6 +752,20 @@ Tree points_gen_fprint_bin(ofstream& fout, int n, int rdim, int cdim){//n: fault
 	}
 	return a;
 }
+
+TreesRowCol points_gen_fprint_bin_trees(int n, int rdim, int cdim){//n: faults//TODO not finished
+	Tree rF, cF;
+	for(int i=0; i<n; i++){
+		int r;
+		do {
+			Point p = point_gen(rdim, cdim);
+			rF.insert(p);
+			r=cF.insert({p.c, p.r});
+		} while (r);
+	}
+	return TreesRowCol(rF, cF);
+}
+
 //TODO A function that return solution list(multiple (nRow, nCol))//Not finished
 Point* solution_list(Tree& t){//Don't insert if used is larger than previous record//Need tree?
 	//int i=1;//TODO change to for loop
@@ -1056,5 +1136,51 @@ int main(){
 	label.close();
 	*/
 	//fsolve_append_bin(80000, "points", "label", sr, sc, n_faults, rdim, cdim);
-	fsolve_create_bin(80000, "pointsTest", "labelTest", sr, sc, n_faults, rdim, cdim);
+	//fsolve_create_bin(80000, "pointsTest", "labelTest", sr, sc, n_faults, rdim, cdim);
+	//points_gen_trees(n_faults, rdim, cdim).rF.print();
+	//TreesRowCol t(points_gen(n_faults, rdim, cdim), points_gen(n_faults, rdim, cdim));
+	//Tree t1=points_gen(n_faults, rdim, cdim);
+	///*
+	//Currently working Try copy constructor of Tree
+	Tree t1=points_gen(50, rdim, cdim);
+	t1.print();
+	Tree t2=t1;
+	t2[1][1]=99;
+	t2.print();
+	t1.print();
+	//*/
+
+	//t1.head->child->print();
+	/*
+	cStack c=*(t1.head->child);
+	c.print();
+	*/
+	/*
+	rList r=*t1.head;
+	(*r.child)[0]=20;
+	r.child->print();
+	t1.head->child->print();
+	*/
+	/*
+	//Demonstrate that copy constructor of cStack works properly
+	cStack a;
+	a.insert(3);
+	a.insert(6);
+	a.print();
+	cStack a2=a;
+	a2[0]=9;
+	a2.print();
+	a.print();
+	*/
+	/*
+	//Demonstrate that copy constructor of cStack works properly with pointer
+	cStack a;
+	a.insert(3);
+	a.insert(6);
+	a.print();
+	cStack* p=new cStack(a);
+	(*p)[0]=9;
+	p->print();
+	a.print();
+	*/
 }
